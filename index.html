@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Animal Table</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background: #f7f7f7;
+      background-color: rgba(184, 180, 180, 0.2) ;
+    }
+    .container {
+      max-width: 1000px;
+      margin: auto;
+      
+    }
+    header {
+      text-align: center;
+      margin-bottom: 20px;
+      background-color: rgb(78, 214, 169);
+      margin-top: 0;
+      box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+    }
+    h1 {
+      color: #333;
+    }
+    .form-container,
+    .data-container {
+      background: #fff;
+      padding: 20px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+    }
+    form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+    form select,
+    form input[type="text"] {
+      padding: 8px;
+      font-size: 14px;
+    }
+    form input[type="submit"] {
+      padding: 8px 16px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .sort-container {
+      margin-top: 10px;
+    }
+    .category {
+      margin-bottom: 20px;
+    }
+    .animal-card {
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      padding: 10px;
+      margin: 10px 0;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      background: #fafafa;
+    }
+    .animal-card img {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 5px;
+    }
+    .animal-info {
+      flex: 1;
+    }
+    .animal-actions button {
+      margin-right: 5px;
+      padding: 5px 10px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Animal Table</h1>
+    </header>
+
+    <div class="form-container">
+      <form id="animalForm">
+        <select id="categorySelect">
+          <option value="Big Cats">Big Cats</option>
+          <option value="Dogs">Dogs</option>
+          <option value="Big Fish">Big Fish</option>
+        </select>
+        <input type="text" id="speciesInput" placeholder="Species" />
+        <input type="text" id="nameInput" placeholder="Name" />
+        <input type="text" id="sizeInput" placeholder="Size" />
+        <input type="text" id="locationInput" placeholder="Location" />
+        <input type="text" id="fileInput" placeholder="Image URL" />
+        <input type="submit" id="submitButton" value="Add Animal" />
+      </form>
+      <div class="sort-container">
+        <label for="sortFilter">Sort by: </label>
+        <select id="sortFilter">
+          <option value="">Default</option>
+          <option value="name">Name</option>
+          <option value="size">Size</option>
+          <option value="location">Location</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="data-container">
+      <div class="category" id="bigCatsContainer">
+        <h3>Category: Big Cats</h3>
+        <div class="animal-list" id="bigCatsList"></div>
+      </div>
+      <div class="category" id="dogsContainer">
+        <h3>Category: Dogs</h3>
+        <div class="animal-list" id="dogsList"></div>
+      </div>
+      <div class="category" id="bigFishContainer">
+        <h3>Category: Big Fish</h3>
+        <div class="animal-list" id="bigFishList"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Initialize data with some animals and assign each a unique id.
+    let nextId = 1;
+    const data = {
+      dogs: [
+        {
+          category: "Dogs",
+          species: "Labrador Retriever",
+          name: "Buddy",
+          size: "Large",
+          location: "USA",
+          file:
+            "https://static.vecteezy.com/system/resources/thumbnails/026/975/383/small_2x/jaguar-in-nature-national-geography-wide-life-animals-ai-generated-photo.jpg",
+        },
+        {
+          category: "Dogs",
+          species: "Golden Retriever",
+          name: "Charlie",
+          size: "Large",
+          location: "Canada",
+          file:
+            "https://static.vecteezy.com/system/resources/thumbnails/026/975/383/small_2x/jaguar-in-nature-national-geography-wide-life-animals-ai-generated-photo.jpg",
+        },
+        {
+          category: "Dogs",
+          species: "Beagle",
+          name: "Max",
+          size: "Medium",
+          location: "UK",
+          file:
+            "https://static.vecteezy.com/system/resources/thumbnails/026/975/383/small_2x/jaguar-in-nature-national-geography-wide-life-animals-ai-generated-photo.jpg",
+        },
+      ],
+      bigCats: [
+        {
+          category: "Big Cats",
+          species: "Lion",
+          name: "Simba",
+          size: "Large",
+          location: "Africa",
+          file:
+            "https://static.vecteezy.com/system/resources/thumbnails/026/975/383/small_2x/jaguar-in-nature-national-geography-wide-life-animals-ai-generated-photo.jpg",
+        },
+        {
+          category: "Big Cats",
+          species: "Tiger",
+          name: "Rajah",
+          size: "Large",
+          location: "India",
+          file:
+            "https://static.vecteezy.com/system/resources/thumbnails/026/975/383/small_2x/jaguar-in-nature-national-geography-wide-life-animals-ai-generated-photo.jpg",
+        },
+        {
+          category: "Big Cats",
+          species: "Leopard",
+          name: "Leo",
+          size: "Medium",
+          location: "Asia",
+          file:
+            "https://static.vecteezy.com/system/resources/thumbnails/026/975/383/small_2x/jaguar-in-nature-national-geography-wide-life-animals-ai-generated-photo.jpg",
+        },
+        {
+          category: "Big Cats",
+          species: "Lion",
+          name: "Simba",
+          size: "Large",
+          location: "Africa",
+          file:
+            "https://static.vecteezy.com/system/resources/thumbnails/026/975/383/small_2x/jaguar-in-nature-national-geography-wide-life-animals-ai-generated-photo.jpg",
+        },
+      ],
+      bigFish: [
+        {
+          category: "Big Fish",
+          species: "Great White Shark",
+          name: "Jaws",
+          size: "Extra Large",
+          location: "Australia",
+          file:
+            "https://static.vecteezy.com/system/resources/thumbnails/026/975/383/small_2x/jaguar-in-nature-national-geography-wide-life-animals-ai-generated-photo.jpg",
+        },
+        {
+          category: "Big Fish",
+          species: "Blue Marlin",
+          name: "Marley",
+          size: "Large",
+          location: "Pacific Ocean",
+          file:
+            "https://static.vecteezy.com/system/resources/thumbnails/026/975/383/small_2x/jaguar-in-nature-national-geography-wide-life-animals-ai-generated-photo.jpg",
+        },
+        {
+          category: "Big Fish",
+          species: "Manta Ray",
+          name: "Ray",
+          size: "Large",
+          location: "Indian Ocean",
+          file:
+            "https://static.vecteezy.com/system/resources/thumbnails/026/975/383/small_2x/jaguar-in-nature-national-geography-wide-life-animals-ai-generated-photo.jpg",
+        },
+        {
+          category: "Big Fish",
+          species: "Whale Shark",
+          name: "Whaley",
+          size: "Extra Large",
+          location: "Atlantic Ocean",
+          file:
+            "https://static.vecteezy.com/system/resources/thumbnails/026/975/383/small_2x/jaguar-in-nature-national-geography-wide-life-animals-ai-generated-photo.jpg",
+        },
+      ],
+    };
+
+    // Assign unique IDs to the initial animals.
+    for (let category in data) {
+      data[category].forEach((animal) => {
+        animal.id = nextId++;
+      });
+    }
+
+    // Mapping between display names and data keys.
+    const keyMapping = {
+      "Big Cats": "bigCats",
+      Dogs: "dogs",
+      "Big Fish": "bigFish",
+    };
+
+    // Global variable to track if we’re editing an animal.
+    // It will hold an object like: { oldCategory: "dogs", animalId: 2 } or null.
+    let currentEdit = null;
+
+    // Grab form elements.
+    const animalForm = document.getElementById("animalForm");
+    const categorySelect = document.getElementById("categorySelect");
+    const speciesInput = document.getElementById("speciesInput");
+    const nameInput = document.getElementById("nameInput");
+    const sizeInput = document.getElementById("sizeInput");
+    const locationInput = document.getElementById("locationInput");
+    const fileInput = document.getElementById("fileInput");
+    const submitButton = document.getElementById("submitButton");
+    const sortFilter = document.getElementById("sortFilter");
+
+    // Containers for each category.
+    const bigCatsList = document.getElementById("bigCatsList");
+    const dogsList = document.getElementById("dogsList");
+    const bigFishList = document.getElementById("bigFishList");
+
+    // Sort the given array based on the chosen filter.
+    function sortItems(items) {
+      const filter = sortFilter.value;
+      if (!filter) return items;
+      let sorted = [...items];
+      if (filter === "name") {
+        sorted.sort((a, b) => a.name.localeCompare(b.name));
+      } else if (filter === "size") {
+        sorted.sort((a, b) => a.size.localeCompare(b.size));
+      } else if (filter === "location") {
+        sorted.sort((a, b) => a.location.localeCompare(b.location));
+      }
+      return sorted;
+    }
+
+    // Update the display for all animal categories.
+    function updateDisplay() {
+      bigCatsList.innerHTML = "";
+      dogsList.innerHTML = "";
+      bigFishList.innerHTML = "";
+      renderCategory("bigCats", bigCatsList);
+      renderCategory("dogs", dogsList);
+      renderCategory("bigFish", bigFishList);
+    }
+
+    // Render the animal cards for a specific category.
+    function renderCategory(categoryKey, container) {
+      let items = sortItems(data[categoryKey]);
+      items.forEach((animal) => {
+        const card = document.createElement("div");
+        card.className = "animal-card";
+
+        const img = document.createElement("img");
+        img.src = animal.file;
+        img.alt = animal.name;
+
+        const infoDiv = document.createElement("div");
+        infoDiv.className = "animal-info";
+        infoDiv.innerHTML = `
+          <p><strong>Name:</strong> ${animal.name}</p>
+          <p><strong>Species:</strong> ${animal.species}</p>
+          <p><strong>Size:</strong> ${animal.size}</p>
+          <p><strong>Location:</strong> ${animal.location}</p>
+        `;
+
+        const actionsDiv = document.createElement("div");
+        actionsDiv.className = "animal-actions";
+
+        // Edit button
+        const editBtn = document.createElement("button");
+        editBtn.textContent = "Edit";
+        editBtn.addEventListener("click", () => {
+          startEdit(categoryKey, animal.id);
+        });
+
+        // Delete button
+        const deleteBtn = document.createElement("button");
+        deleteBtn.textContent = "Delete";
+        deleteBtn.addEventListener("click", () => {
+          deleteAnimal(categoryKey, animal.id);
+        });
+
+        actionsDiv.appendChild(editBtn);
+        actionsDiv.appendChild(deleteBtn);
+
+        card.appendChild(img);
+        card.appendChild(infoDiv);
+        card.appendChild(actionsDiv);
+
+        container.appendChild(card);
+      });
+    }
+
+    // Remove an animal based on its unique id.
+    function deleteAnimal(categoryKey, animalId) {
+      const index = data[categoryKey].findIndex((animal) => animal.id === animalId);
+      if (index > -1) {
+        data[categoryKey].splice(index, 1);
+        updateDisplay();
+      }
+    }
+
+    // Start editing an animal: fill the form with its current details.
+    function startEdit(categoryKey, animalId) {
+      const animal = data[categoryKey].find((animal) => animal.id === animalId);
+      if (!animal) return;
+      currentEdit = { oldCategory: categoryKey, animalId: animalId };
+      categorySelect.value = animal.category;
+      speciesInput.value = animal.species;
+      nameInput.value = animal.name;
+      sizeInput.value = animal.size;
+      locationInput.value = animal.location;
+      fileInput.value = animal.file;
+      submitButton.value = "Update Animal";
+    }
+
+    // Handle form submission for adding or updating an animal.
+    animalForm.addEventListener("submit", function (e) {
+      e.preventDefault();
+      if (
+        !speciesInput.value ||
+        !nameInput.value ||
+        !sizeInput.value ||
+        !locationInput.value ||
+        !fileInput.value
+      ) {
+        alert("Invalid Data");
+        return;
+      }
+      const formCategory = categorySelect.value;
+      const newAnimal = {
+        category: formCategory,
+        species: speciesInput.value,
+        name: nameInput.value,
+        size: sizeInput.value,
+        location: locationInput.value,
+        file: fileInput.value,
+      };
+      const selectedKey = keyMapping[formCategory];
+
+      if (currentEdit) {
+        // Update an existing animal.
+        const { oldCategory, animalId } = currentEdit;
+        const index = data[oldCategory].findIndex((animal) => animal.id === animalId);
+        if (index > -1) {
+          if (oldCategory !== selectedKey) {
+            // If category changed, remove from old and add to new.
+            data[oldCategory].splice(index, 1);
+            newAnimal.id = animalId; // preserve id
+            data[selectedKey].push(newAnimal);
+          } else {
+            newAnimal.id = animalId;
+            data[oldCategory][index] = newAnimal;
+          }
+        }
+        alert("Animal updated successfully");
+        currentEdit = null;
+        submitButton.value = "Add Animal";
+      } else {
+        // Add new animal.
+        newAnimal.id = nextId++;
+        data[selectedKey].push(newAnimal);
+        alert("Data added Successfully");
+      }
+      // Clear form fields.
+      speciesInput.value = "";
+      nameInput.value = "";
+      sizeInput.value = "";
+      locationInput.value = "";
+      fileInput.value = "";
+      updateDisplay();
+    });
+
+    // Update display when sort filter changes.
+    sortFilter.addEventListener("change", updateDisplay);
+
+    // Render initial data.
+    updateDisplay();
+  </script>
+</body>
+</html>
